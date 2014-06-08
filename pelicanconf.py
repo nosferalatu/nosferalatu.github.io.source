@@ -58,8 +58,8 @@ PYGMENTS_STYLE = 'solarizedlight'
 # Pelican needs path separators to be OS-specific (e.g. backslash for Windows)
 CUSTOM_CSS = 'static\custom.css'
 
-# Tell Pelican to add 'extra/custom.css' to the output dir
-STATIC_PATHS = ['images', 'extra\custom.css']
+# Tell Pelican what to add to the output dir
+STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME']
 
 # Tell Pelican to change the path to 'static/custom.css' in the output dir
 EXTRA_PATH_METADATA = {
