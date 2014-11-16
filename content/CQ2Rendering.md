@@ -5,7 +5,6 @@ Category: Blog
 Slug: CQ2Rendering
 Author: David Farrell
 Summary: Rendering in Costume Quest 2
-Status: draft
 
 Developing the rendering tech for Double Fine's Costume Quest 2 was challenging because the game was developed by a small team in less than a year. It was even more challenging because it was released nearly simultaneously on eight platforms: PS4, XBox One, PS3, XBox 360, WiiU, Windows, OSX, and Linux. It used Double Fine's proprietary game engine, named Buddha.
 
