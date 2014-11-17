@@ -10,7 +10,7 @@ Developing the rendering tech for Double Fine's Costume Quest 2 was challenging 
 
 Much of the engineering schedule for Costume Quest 2 (CQ2) was taken up with resurrecting support for the old consoles and and bringing up the engine on new consoles. At the beginning of development, Buddha was running only on Windows, and with a bit of fixing up, also on OSX and Linux. The 360 and PS3 builds had suffered heavily bit rot, and the WiiU port had never been integrated back to our main codebase. Finally, the Buddha engine wasn't 64-bit, much less running on XBOne or PS4.
 
-As a result, little programming time was left for look development in preproduction. On the plus side, CQ2 was a sequel, so the game's art style was a known quantity. Nevertheless, the CQ2 design was more ambitious than the original Costume Quest, including levels in a swampy bayou in New Orleans and a dystopic future where you have to save Halloween from an evil time-travelling dentist.
+As a result, little programming time was left for look development in preproduction. On the plus side, CQ2 was a sequel, so the game's art style was a known quantity. Nevertheless, the CQ2 design was more ambitious than the original Costume Quest, including levels in a swampy bayou in New Orleans and a dystopic future where you have to save Halloween from an evil time-traveling dentist.
 
 We knew we could use the old graphics tech from the original game, but of course, we wanted to improve on the past and do better. We also had the difficult constraint of having to scale from last gen consoles all the way up to modern consoles and desktop PC's. So... let's roll up our sleeves and get to it!
 
@@ -76,3 +76,11 @@ The ambient occlusion stored the per-vertex AO. This needed to be in its own cha
 The specular intensity and emissive were packed together using four bits each. The specular intensity represented a value in the range [0, 0.1], and the emissive was in the range [0, 8]. In the lighting composition pass, the emissive value multiplied with the albedo color and added to the final lit color. It would have been nice to have a separate emissive color, but there was no room in the gbuffer.
 
 The gloss (AKA roughness, or smoothness) was in the range [0, 2048] and stored in 7 bits. The top bit stored the cel shaded bit.
+
+### Future
+
+It would have been interesting to squeeze more out of the gbuffer by encoding albedo in YCoCg as discussed in [The Compact YCoCg Framebuffer](http://jcgt.org/published/0001/01/02/). 
+
+The popular GGX shading function can be evaluated pretty cheaply; you can read more about that at [Optimizing GGX Shaders with dot(L,H)](http://www.filmicworlds.com/2014/04/21/optimizing-ggx-shaders-with-dotlh/).
+
+Future projects will have different constraints and target more modern hardware, but I wanted to share what worked well for Costume Quest 2.
