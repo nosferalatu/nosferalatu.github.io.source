@@ -56,7 +56,7 @@ PYGMENTS_STYLE = 'emacs'
 
 # We put our theme customizations into our own custom.css file
 # Pelican needs path separators to be OS-specific (e.g. backslash for Windows)
-CUSTOM_CSS = 'static\custom.css'
+CUSTOM_CSS = 'static/custom.css'
 
 # Tell Pelican what to add to the output dir
 STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME']
