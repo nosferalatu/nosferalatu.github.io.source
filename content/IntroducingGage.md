@@ -2,7 +2,7 @@ Title: Introducing GAGE
 Date: 2014-11-30 12:00
 Tags: Programming
 Category: Blog
-Slug: GraphicsEngine
+Slug: IntroGage
 Author: David Farrell
 Summary: Introducing GAGE
 
