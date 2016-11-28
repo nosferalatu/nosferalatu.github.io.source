@@ -67,3 +67,6 @@ EXTRA_PATH_METADATA = {
 }
 
 DISPLAY_TAGS_ON_SIDEBAR = False
+
+PLUGIN_PATHS=['./plugins']
+PLUGINS = ['render_math']
