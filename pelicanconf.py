@@ -71,6 +71,8 @@ EXTRA_PATH_METADATA = {
 DISPLAY_TAGS_ON_SIDEBAR = False
 
 PLUGIN_PATHS=['./plugins']
+
+# the i18n and jinja stuff is from https://github.com/getpelican/pelican-themes/issues/482
 PLUGINS = ['render_math','i18n_subsites']
 JINJA_ENVIRONMENT = {
     'extensions': ['jinja2.ext.i18n'],
