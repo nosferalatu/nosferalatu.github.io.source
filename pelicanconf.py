@@ -14,6 +14,8 @@ DEFAULT_LANG = 'en'
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
+AUTHOR_FEED_ATOM = None
+AUTHOR_FEED_RSS = None
 
 # Blogroll
 #LINKS =  (('Pelican', 'http://getpelican.com/'),
@@ -32,7 +34,7 @@ DEFAULT_PAGINATION = 10
 
 OUTPUT_PATH = '../site'
 
-MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']
+# MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']
 
 DISPLAY_PAGES_ON_MENU = True
 
@@ -69,4 +71,8 @@ EXTRA_PATH_METADATA = {
 DISPLAY_TAGS_ON_SIDEBAR = False
 
 PLUGIN_PATHS=['./plugins']
-PLUGINS = ['render_math']
+PLUGINS = ['render_math','i18n_subsites']
+JINJA_ENVIRONMENT = {
+    'extensions': ['jinja2.ext.i18n'],
+}
+

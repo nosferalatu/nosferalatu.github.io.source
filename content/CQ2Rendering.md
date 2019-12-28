@@ -14,7 +14,7 @@ As a result, little programming time was left for look development in preproduct
 
 We knew we could use the old graphics tech from the original game, but of course, we wanted to improve on the past and do better. We also had the difficult constraint of having to scale from last gen consoles all the way up to modern consoles and desktop PC's. So... let's roll up our sleeves and get to it!
 
-![test image]({filename}images/cq2/cq2_bayou.jpg)
+![test image]({static}images/cq2/cq2_bayou.jpg)
 
 ### Physically Based Rendering
 
@@ -25,7 +25,7 @@ The first style of rendering is for the characters, which use a toon shader and 
 The second style of rendering is for the rest of the world, which uses an energy conserving Blinn-Phong BRDF lit by a primary shadow-casting sunlight, additional point lights, and a hemisphere light for ambient lighting. All lighting was dynamic, except for prebaked per-vertex ambient occlusion. The Blinn Phong BRDF was based on [Tri-Ace's work](http://renderwonk.com/publications/s2010-shading-course/gotanda/course_note_practical_implementation_at_triace.pdf). We dropped the Fresnel factor, which doesn't match the real world but doesn't break energy conservation. The Fresnel effect didn't fit the art style, and it was a bit cheaper to drop the calculation.
 
 Here you can see the toon-shaded characters along with a nice specular highlight on the ground:
-![test image]({filename}images/cq2/cq2_street.jpg)
+![test image]({static}images/cq2/cq2_street.jpg)
 
 There are two aspects of physically based rendering which are very useful even for games that use nonphotorealistic materials. One aspect is energy conservation, meaning that a surface emits no more light than it receives. This is important because you want materials that work independently of the lighting environment and avoid the production problem of reworking materials after you do a lighting pass and vice versa. When renderers don't obey energy conservation, such as with unnormalized Blinn-Phong, you often have to manually adjust the specular color, gloss, and perhaps other ad-hoc factors whenever the lighting changes. Another useful aspect of physically based rendering is that it produces more consistent results by following a few constraints. The number and range of material attributes is better defined, which helped us reason about about which values were important to Costume Quest 2 and how best to pack them into a deferred renderer's gbuffer.
 
@@ -65,7 +65,7 @@ normal X         | normal Y        | spec. intensity / emissive | gloss / cel sh
 ```
 
 In this screenshot, you can see debug visualizations of unpacked data in the gbuffer. Clockwise from top left, they are albedo, normal, specular intensity, roughness, ambient occlusion, and emissive.
-![test image]({filename}images/cq2/cq2_gbuffer.jpg)
+![test image]({static}images/cq2/cq2_gbuffer.jpg)
 
 The albedo had to be stored in gamma space as this was an eight bit per channel format. Our pipeline is gamma correct, meaning it does all lighting and blending in linear space, so we had to be sure to convert the albedo colors to sRGB before we wrote them to the framebuffer. Not all platforms had support for per-render-target sRGB writes, so this was done manually.
 
