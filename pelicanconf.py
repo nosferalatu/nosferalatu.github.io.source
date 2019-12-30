@@ -70,6 +70,8 @@ EXTRA_PATH_METADATA = {
 
 DISPLAY_TAGS_ON_SIDEBAR = False
 
+TYPOGRIFY = True
+
 PLUGIN_PATHS=['./plugins']
 
 # the i18n and jinja stuff is from https://github.com/getpelican/pelican-themes/issues/482
