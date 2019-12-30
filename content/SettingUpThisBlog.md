@@ -99,6 +99,13 @@ The full `extra\custom.css` path is `c:\blog\source\content\extra\custom.css` (s
      border-radius:4px
     }
 
+Google Analytics
+----------------
+
+Google Analytics can be set up by following the instructions here: [Google Analytics With Pelican](https://matthewdevaney.com/posts/2019/03/17/google-analytics-with-pelican/)
+
+Once you have modified the publishconf.py with your analytics tracking number, you need to run the command `make publish` instead of `make html` to have the tracking code included. You want to `make publish` once you are ready to generate the pages that will go live, and `make html` when you are generating pages to view your changes locally.
+
 Github Pages Hosting
 --------------------
 

@@ -1,5 +1,5 @@
 Title: Projects
-Date: 2015-7-23 12:00
+Date: 2019-12-29 12:00
 Tags: Projects
 Category: Blog
 Slug: Projects
@@ -8,11 +8,25 @@ Summary: Projects
 
 These are some things I've worked on over the years:
 
+### Medium (Adobe / 2020 )
+
+Medium was acquired by Adobe at the end of 2019: [Adobe Acquisition](https://theblog.adobe.com/adobe-accelerates-3di-efforts-through-medium-acquisition/)
+
+At Adobe, I work in the 3D&Immersive group, where I'm continuing to work on Medium and developing innovative sculpting and modeling software.
+
+![test image]({static}../images/oculusmedium5.jpg)
+
+![test image]({static}../images/oculusmedium4.jpg)
+
+![test image]({static}../images/oculusmedium6.jpg)
+
 ### Medium (Oculus / 2016 )
 
-Built specifically for virtual reality, [Medium](https://www.oculus.com/medium/) lets you sculpt, model, paint, and create solid-feeling objects in a VR environment. 
+[Oculus Medium](https://www.oculus.com/medium/) is a digital sculpting application that works with virtual reality headsets and 6DoF controllers to let you sculpt, model, paint, and create solid-feeling objects in a VR environment.
+
+I led the graphics team at Facebook/Oculus that developed Medium from before the initial release to the Adobe acquisition. I made core contributions to Medium's sculpting technology, such as the SDF sparse data structures, the real-time stamp brushes, and the move tool, as well as the Vulkan rendering backend and Transvoxel renderer.
  
-![test image]({static}../images/oculusmedium1.jpg)
+![test image]({static}../images/oculusmedium_orc.jpg)
 
 ![test image]({static}../images/oculusmedium2.jpg)
 
