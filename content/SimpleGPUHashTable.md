@@ -1,11 +1,10 @@
 Title: A Simple GPU Hash Table
-Date: 2020-03-06 15:00
+Date: 2020-03-08 15:00
 Tags: Programming
 Category: Blog
 Slug: SimpleGPUHashTable
 Author: David Farrell
 Summary: A Simple GPU Hash Table
-Status: draft
 
 I released a new project [A Simple GPU Hash Table](https://github.com/nosferalatu/SimpleGPUHashTable) on Github.
 
@@ -21,7 +20,7 @@ The hash table implementation has a few constraints that make it work well on a 
 + The hash table is a fixed size
 + The hash table size must be a power of two
 
-An empty sentinel must be reserved for both keys and values. In the example code, this is 0xffffffff.
+An empty sentinel must be reserved for both keys and values (0xffffffff in the example code).
 
 # Lock Free Hash Table
 
@@ -35,7 +34,7 @@ struct KeyValue
 };
 ```
 
-The table uses power-of-two sizes instead of prime numbers because pow2/AND masking is a fast single instruction and the modulo operator is much slower. This is important for linear probing, because as you linearly search through the table, you must wrap the slot index at each slot. The cost of a modulo quickly adds up.
+The table uses power-of-two sizes instead of prime numbers because pow2/AND masking is a fast single instruction and the modulo operator is much slower. This is important for linear probing, because as the table is linearly searched, the slot index must be wrapped at each slot. The cost of a modulo operation at each slot quickly adds up.
 
 The table stores only a key and a value for each item, not the hash of the key. Because the table stores 32-bit keys, computing the hash is fairly quick. The example code uses a Murmur3 hash which is only a few shifts, XORs, and multiplies.
 
@@ -43,7 +42,20 @@ The hash table uses a lock free technique that does not depend on any memory ord
 
 Both the keys and values of the hash table are initialized to empty.
 
-You can use 64 bit keys and/or 64 bit values. The requirement is that you need atomic reads, writes, and compare-and-swap operations for the keys, and atomic read and writes for the values. Fortunately CUDA reads/writes of 32 and 64 bit values are atomic as long as they are naturally aligned (see [here](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses)), and 64 bit atomic compare-and-swap exist on modern GPU's. There is of course some performance cost to using 64 bit key/values.
+The code can be modified to use 64 bit keys and/or 64 bit values. Keys require atomic reads, writes, and compare-and-swap operations, and values require atomic read and writes operations. Fortunately CUDA reads/writes of 32 and 64 bit values are atomic as long as they are naturally aligned (see [here](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses)), and 64 bit atomic compare-and-swap exist on modern GPU's. There is of course some performance cost to using 64 bit key/values.
+
+# Hash Table State
+
+When thinking about the hash table, consider that there are four possible states that each key/value can be in:
+
++ Both key and value are empty. This is how the hash table is initialized.
++ The key has been written, but the value has not yet been written. If another thread reads data at this point, then it will return the value of empty (which is fine; it's the same result as if the other thread had ran slightly earlier, and this is a concurrent data structure).
++ Both the key and value have been written.
++ The value is visible to other threads, but the key is not yet visible. This might happen because the CUDA programming model assumes a weakly ordered memory model. This is fine, in any event-- the key is still empty, even though the value is not.
+
+A subtle but important point is that once a key has been written to a slot, it never moves (even when the key is deleted, as discussed below).
+
+The hash table code works even with weakly ordered memory models, where the order of memory reads and writes is unknown. As we look at the code below for hash table insertion, lookups, and deletion, keep in mind that each key/value is in one of these four states.
 
 # Hash Table Insertion
 
@@ -70,15 +82,6 @@ void gpu_hashtable_insert(KeyValue* hashtable, uint32_t key, uint32_t value)
 To insert a key, the code iterates through the hash table array starting at the insertion key's hash. At each hash table array slot, it does an atomic compare-and-swap, which compares the key at that slot to empty, updates the slot's key with the insertion key if it matches, and returns the slot's original key. If that slot's original key was empty or matches the insertion key, then the code found the correct slot for the insertion key, and sets the slot's value to the insertion value.
 
 If there are many items with the same key in a single kernel invocation of gpu_hashtable_insert(), then any of those values may be written to the key's slot. This is still correct; one of the key/value writes in the invocation will succeed, but because all of this is happening in parallel across many threads, it is impossible to know which will be the last to write to memory.
-
-This code works even with weakly ordered memory model. There are four states that a key/value can be in:
-
-+ Both key and value are empty. This is how the hash table is initialized.
-+ The key has been written, but the value has not yet been written. If another thread reads data at this point, then it will return the value of empty (which is fine; it's the same result as if the other thread had ran slightly earlier, and this is a concurrent data structure).
-+ Both the key and value have been written.
-+ The value is visible to other threads, but the key is not yet visible. This might happen because the CUDA programming model assumes a weakly ordered memory model. This is fine, in any event-- the key is still empty, even though the value is not.
-
-A subtle but important point is that once a key has been written to a slot, it never moves (even when the key is deleted, as we'll see below).
 
 # Hash Table Lookups
 
@@ -135,13 +138,13 @@ void gpu_hashtable_delete(KeyValue* hashtable, uint32_t key, uint32_t value)
 }
 ```
 
-To delete a key in the table, we actually leave the key in the table, but mark its value as empty. This code is very similar to lookup(), except that if it finds a matching key in the table, it sets its value to empty.
+Deleting a key involves something unexpected: we leave the key in the table and mark its value (not the key) as empty. This code is very similar to lookup(), except that if it finds a matching key in the table, it sets its value to empty.
 
 As mentioned earlier, once a key has been written to a slot, it never moves. Even when an item is deleted from the table, the key remains but its value is empty. This means there's no need to use an atomic operation to write to the slot's value, because it doesn't matter if the current value is non-empty or empty-- the slot's value will be updated to empty either way.
 
 # Hash Table Resizing
 
-To resize the hash table, you can create a new table of a larger size, and insert all the non-empty elements of the old table into the new table. I didn't implement that, as the example code is intended to be simple. Furthermore, this example is in CUDA, and memory allocations in CUDA programs are often done by the host code, not within a CUDA kernel.
+Resizing the hash table can be performed by creating a new table of larger size and inserting all non-empty elements of the old table into the new table. I didn't implement that, as the example code is intended to be simple. Furthermore, this example is in CUDA, and memory allocations in CUDA programs are often done by the host code, not within a CUDA kernel.
 
 Alternatively, [A Lock-Free Wait-Free Hash Table](https://web.stanford.edu/class/ee380/Abstracts/070221_LockFreeHash.pdf) describes how to resize this lock free data structure. 
 
@@ -170,15 +173,34 @@ The lock free hash table supports concurrent inserts, lookups, and deletes. Beca
 
 However, when processing a batch of inserts/deletes in parallel in a kernel, and a kernel's input array of key/values contains duplicate keys, then it's unpredictable which of those key/values will "win" and be the last one written to the hash table. For example, imagine that an insertion kernel is called with an input array of key/values is `A/0 B/1 A/2 C/3 A/4`. When the kernel finishes, the key/values `B/1` and `C/3` are guaranteed to be in the table, but any one of `A/0`, `A/2`, or `A/4` will be in the table. Depending on the application, this may or may not be an issue-- it might be known that the input array has no duplicate keys, or it might not matter which value is the last to be written.
 
-If this is an issue for an application, then it needs to separate the duplicate key/values into different CUDA kernel calls. In CUDA, all operations within a kernel invocation always finish before the next kernel invocation (at least, within a single stream; kernels in different streams execute in parallel). In the above example, if we call one kernel with `A/0 B/1 A/2 C/3`, then `A/4`, then we know that the key `A` will have the value `4`.
+If this is an issue for an application, then it needs to separate the duplicate key/values into different CUDA kernel calls. In CUDA, all operations within a kernel invocation always finish before the next kernel invocation (at least, within a single stream; kernels in different streams execute in parallel). In the above example, if one kernel is called with `A/0 B/1 A/2 C/3`, and then another kernel is called with `A/4`, then the key `A` will have the value `4`.
 
 Another consideration is whether the lookup() and delete() functions should use a plain or volatile pointer to the hash table key/value array. The [CUDA documentation for volatile](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#volatile-qualifier) states that "The compiler is free to optimize reads and writes to global or shared memory ... These optimizations can be disabled using the volatile keyword: ... any reference to this variable compiles to an actual memory read or write instruction." Using volatile is not necessary for correctness; if a thread uses a cached value from an earlier read, it will be using slightly out of date information, but it will still be using information from a valid state of the hash table at some point in that kernel's invocation. If an application wants to be sure to use the most up to date information, then it can use a volatile pointer, but there is a slight performance hit (in my tests, deleting 32 million elements went from 500 million deletes / second to 450 Mdeletes/sec).
 
-# Linear Probing Problems
+# Performance
 
-An issue with the lock free hash table design is that it uses linear probing, which suffers from clustering, so that keys are often very far from their ideal slot in the hash table. This is made worse by the delete function, which doesn't remove keys from the table, but instead marks their values as empty. Very long probe lengths result in performance of the hash table degrading over time. This behavior is related to the hash table load factor, which is the ratio of active keys to empty slots.
+In a test that inserts 64 million items and deletes 32 million of them, there's no contest between std::unordered_map and the GPU hash table:
 
-To illustrate the issue with linear probing, I used the hash table example code to create a hash table with a capacity of 128 million elements, and inserted 4 million elements into the table in a loop until the table had 124 million elements (a load factor around 0.96). Here's the timing of the kernel that inserted 4 million elements; every row is a CUDA kernel call that inserts 4 million new items into the same hash table:
+![performance comparison]({static}images/stdunorderedmap_vs_simplegpuhashtable.png)
+
+The std::unordered_map took 70691 milliseconds to insert and delete the items, and then freeing the unordered_map (freeing an unordered_map with millions of items consumes a significant amount of time because unordered_map does many memory allocations internally). To be fair, std:unordered_map is operating on a very different set of constraints. It is a single CPU thread, it supports key/values of any size, and it works well with high load factors and has steady performance after many deletions.
+
+The GPU hash table and interop time took 984 milliseconds. That includes time for allocating and deleting the hash table (which is a single memory allocation of 1 GB, which takes some time in CUDA), inserting and deleting the items, and iterating through all items. Also included are all memory copies to/from the GPU.
+
+The GPU hash table took 271 milliseconds. That includes just the GPU time to insert and delete the items, and not the time for memory copies or iterating over the resulting table. If the GPU table is long lived, or the hash table exists entirely on the GPU (for example, to build a hash table on the GPU that is used by other GPU code, not the CPU), then this is the relevant time.
+
+The GPU hash table achieves high performance thanks to the large bandwidth and massive parallelism of GPU's.
+
+# Drawbacks
+
+There are a couple of issues with this hash table design that should be kept in mind:
+
++ Linear probing suffers from clustering, so that keys are often very far from their ideal slots in the table
++ Keys are not removed from the table by the delete function, and clutter the table over time
+
+As a result, performance of the hash table can degrade over time, especially with long-lived hash tables that have had many inserts and deletes. One way to mitigate these issues is to rehash the table into a new table with a sufficiently low load factor and filtering out deleted keys during the rehash.
+
+To illustrate these issues, I used the hash table example code to create a hash table with a capacity of 128 million elements, and inserted 4 million elements into the table in a loop until the table had 124 million elements (a load factor around 0.96). Here's the timing of the kernel that inserted 4 million elements; every row is a CUDA kernel call that inserts 4 million new items into the same hash table:
 
 Load factor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Time to insert 4194304 items |
 ------------|------------------------------|
@@ -214,7 +236,7 @@ Load factor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Time to insert 4194304 i
 0.90 | 105.695999 ms (39.682713 million keys/second) |
 0.94 | 240.204636 ms (17.461378 million keys/second) |
 
-Clearly, performance degrades as the load factor increases. This is not a desirable property of a hash table for most applications. If you are inserting items into a hash table and then throwing it away (for example, to count the words in a book), this might not be a problem. But if you have a long-lived hash table (for example, an image editing application that stores the non-empty parts of the image in a table, and where the user causes many inserts and deletes in the table), this could be a real issue.
+Clearly, performance degrades as the load factor increases. This is not a desirable property of a hash table for most applications. If the application is inserting items into a hash table and then throwing it away (for example, to count the words in a book), this might not be a problem. But if the application has a long-lived hash table (for example, an image editing application that stores the non-empty parts of the image in a table, and where the user causes many inserts and deletes in the table), this could be a real issue.
 
 I measured the probe lengths of the hash table after 64 million inserts (so at a load factor of 0.50). The average probe length was 0.4774, so most keys were either in their best slot or just one slot away. The maximum probe length was 60.
 
@@ -224,50 +246,11 @@ The best way to use this hash table is to keep load factors low. However, that t
 
 Note that this is wasted space in GPU VRAM, which is a more precious commodity than the system memory. While most modern desktop GPU's running CUDA have at least 4 GB of VRAM (and at the time of writing, an NVIDIA 2080 Ti has 11 GB), it's still not ideal to waste so much memory.
 
-I will be writing more about other ways to build GPU hash tables that do not suffer long probe lengths like linear probing.
-
-# Reusing Tombstoned Slots
-
-If we can assume that inserts and deletes do not happen in parallel, then we can modify the lock free hash table design so that keys reuse tombstoned slots. To do that, the delete function marks keys (not values) as tombstoned, and the insert function will place keys into either empty or tombstoned slots. This only works if inserts are done together, and deletes are done together, but never at the same time. (Lookups can work in both cases though).
-
-Note that this means keys get moved around; a key is assigned a slot, but when it's deleted and then re-inserted, it can be assigned a different slot.
-
-The code for insert becomes:
-
-```cpp
-void gpu_hashtable_insert(KeyValue* hashtable, uint32_t key, uint32_t value)
-{
-    uint32_t slot = hash(key);
-
-    while (true)
-    {
-        uint32_t prev = atomicCAS(&hashtable[slot].key, kEmpty, key);
-        if (prev == kEmpty || prev == key)
-        {
-            hashtable[slot].value = value;
-            break;
-        }
-        if (prev == kTombstone)
-        {
-            prev = atomicCAS(&hashtable[slot].key, kTombstone, key);
-            if (prev == kTombstone)
-            {
-                hashtable[slot].value = value;
-                break;
-            }
-        }
-        slot = (slot + 1) & (kHashTableCapacity-1);
-    }
-}
-```
-
-And, as mentioned above, the delete function is modified so that it writes `kTombstone` to the slot's key, instead of writing `kEmpty` to its value.
-
-The example code doesn't use this variant because I wanted to show a generic implementation that supports concurrent inserts, lookups, and deletes.
+I will be writing more about other ways to build GPU hash tables that do not suffer long probe lengths like linear probing and ways to reuse deleted slots in the table.
 
 # Measuring Probe Length
 
-To determine the probe length of a key, we can subtract the key's hash from the key's actual index in the table:
+To determine the probe length of a key, we can subtract the key's hash (its ideal index in the table) from the key's actual index in the table:
 
 ```cpp
 // get_key_index() -> index of key in hash table
@@ -276,13 +259,14 @@ uint32_t probelength = (get_key_index(key) - hash(key)) & (hashtablecapacity-1);
 
 Because of the magic of two's complement numbers, and the fact that the hash table capacity is a power-of-two, this works even when the key's index has wrapped around the beginning of the table. Consider a key that hashes to 1 but has been inserted at slot 3; then for a hash table of capacity 4, we have `(3 - 1) & 3`, which equals 2.
 
-# Future
+# Conclusion
 
-I will be writing more about GPU hash table implementations and analyzing their performance. I've been looking at chaining, Robin Hood hashing, and cuckoo hashing using atomic operations for GPU-friendly lock free data structures.
-
-# References
+Contact me at [Nosferalatu on Twitter](http://twitter.com/nosferalatu) or open a new issue at [the example code's Github repo](https://github.com/nosferalatu/SimpleGPUHashTable) with any questions or comments.
 
 This code is based on the excellent work at:
 
 * [The World's Simplest Lock-Free Hash Table](https://preshing.com/20130605/the-worlds-simplest-lock-free-hash-table/)
 * [A Lock-Free Wait-Free Hash Table](https://web.stanford.edu/class/ee380/Abstracts/070221_LockFreeHash.pdf)
+
+In the future, I will be writing more about GPU hash table implementations and analyzing their performance. I've been looking at chaining, Robin Hood hashing, and cuckoo hashing using atomic operations for GPU-friendly data structures.
+
