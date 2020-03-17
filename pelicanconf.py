@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = 'David Farrell'
 SITENAME = 'Nosferalatu'
-SITEURL = ''
+SITEURL = 'https://nosferalatu.com'
 
 TIMEZONE = 'America/Los_Angeles'
 
