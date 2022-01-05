@@ -80,3 +80,4 @@ JINJA_ENVIRONMENT = {
     'extensions': ['jinja2.ext.i18n'],
 }
 
+GOOGLE_ANALYTICS = "UA-155088985-1"

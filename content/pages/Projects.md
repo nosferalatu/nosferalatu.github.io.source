@@ -136,7 +136,7 @@ This game reused the Conan engine and was a lot of fun. The biggest rendering fe
 
 Conan was Nihilistic's first PS3 and XB360 game. I played a core role in the team that wrote a new PS3/360 renderer for Nihilistic's engine, including a data driven shader pipeline, dynamic lighting, and an SPU job system. After Conan shipped, we refined the renderer to use the Cell's SPU's for a variety of work, such as deferred lighting (where the Cell would do the lighting and the RSX would do the shadow mapping) and geometry processing.
 
-I reverse engineered and did unspeakable things to RSX fragment shader microcode in this project. 
+I added support for cheap static branches in the PS3's fragment shaders by using SPU's to scan the patched RSX microcode for branches using immediate values, pruning out blocks that the branch skipped, and replacing the branch instruction itself with a NOP. Although the RSX supported branching in fragment shaders, it was very slow, even when branching on an immediate value. This technique avoided the slow runtime branch, and was shared with Sony, who released a version of the technique in the PS3 SDK.
 
 ![test image]({static}../images/conan1.jpg)
 

@@ -21,6 +21,3 @@ There is also sample code that was released by Facebook/Oculus under the BSD lic
 
 [Sculpting And Simulations Sample](https://github.com/fbsamples/sculpting-and-simulations-sample)
 
-Here's a video of the volume-preserving elastic move tool:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/oIZSDVaVUt0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
