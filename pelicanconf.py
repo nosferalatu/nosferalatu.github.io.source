@@ -61,7 +61,7 @@ PYGMENTS_STYLE = 'emacs'
 CUSTOM_CSS = 'static/custom.css'
 
 # Tell Pelican what to add to the output dir
-STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME']
+STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME', 'js']
 
 # Tell Pelican to change the path to 'static/custom.css' in the output dir
 EXTRA_PATH_METADATA = {
