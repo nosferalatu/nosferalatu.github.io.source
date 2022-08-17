@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 AUTHOR = 'David Farrell'
 SITENAME = 'Nosferalatu'
 SITEURL = 'https://nosferalatu.com'
+CUSTOM_LICENSE='Content licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>'
 
 TIMEZONE = 'America/Los_Angeles'
 
