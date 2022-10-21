@@ -194,20 +194,12 @@ The logarithm of a rotation matrix is a skew symmetric matrix that corresponds t
   </div>
 </body>
 
-<script type="importmap">
-{
-    "imports":
-    {
-       "lil-gui": "/js/lil-gui/lil-gui.esm.js"
-     }
-}
-</script>
 <!-- <script type="text/javascript" src="/js/testClearToRed.js"></script> -->
 <script src="/js/three.js/three.min.js"></script>
 <script src="/js/three.js/OrbitControls.js"></script>
 <script src="/js/three.js/TransformControls.js"></script>
-<!-- <script type="module" src="/js/lil-gui/lil-gui.esm.js"></script> -->
-<script type="module" src="/js/VectorField.js"></script>
+<script src="/js/lil-gui/lil-gui@0.17.umd.js"></script>
+<script src="/js/VectorField.js"></script>
 
 
 # Miscellaneous
