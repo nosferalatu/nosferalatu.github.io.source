@@ -72,75 +72,81 @@ Using that, we can find the derivative of our earlier equation $x(t) = e^{log(T)
 
 $\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$.
 
-### What's this all mean?
-
-The equation
-
-$\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$
-
-(which is the same as $\dfrac{d}{dt}x(t) = log(T) x(t)$)
-
-can be read as: to find the first derivative (tangent vector) of the point at time t, start with the initial position of the point, transform it with the interpolated transform at time t, and then multiply it by the log of the transform. This is using column vector notation, so you should read the operations right-to-left, so the initial position of the point is $x(0)$, the interpolated transform is $e^{log(T) t}$, and the log of the transform is $log(T)$.
+This can be read as: to find the first derivative (tangent vector) of the point at time t, start with the initial position of the point, transform it with the interpolated transform at time t, and then multiply it by the log of the transform. This is using column vector notation, so you should read the operations right-to-left: the initial position of the point is $x(0)$, the interpolated transform is $e^{log(T) t}$, and the log of the transform is $log(T)$.
 
 You can think of $e^{log(T) t}$ as a kind of operator that maps points from their initial position to their new position at time t. I like to think of the matrix exponential as like integration. At time 0, $e^{log(T) t}$ is the identity matrix (because $e^0=I$ for matrix exponentials); at time 1.0, $e^{log(T) t}$ is the original transform matrix T (because $e^{log(T)}=T$).
 
-And, you can think of $log(T)$ as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is constant with respect to t; it's the same field, regardless of what time is. The vector field shows what the velocity is for every point in space.
+### What's this all mean?
+
+If we take the equation at the end of "What's $T^t$?"
+
+$x(t) = e^{log(T) t} x(0)$
+
+and substitute that into the equation at the end of "What's the derivative?"
+
+$\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$,
+
+then we have:
+
+$\dfrac{d}{dt}x(t) = log(T) x(t)$.
+
+This relates the derivative of a moving point to the logarithm of the transformation moving that point.
+
+You can think of $log(T)$ as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is constant with respect to t; it's the same field, regardless of what time is. The vector field shows what the velocity is for every point in space.
 
 That equation is saying that if you transform any point in space by the logarithm of the transform, you will get the first derivative at that point. The first derivative is the velocity, so $log(T)$ defines the velocity field (the field of tangent vectors at every point in space). 
 
 As x moves through space by the transform matrix, it forms a curve; the tangent vector at time t is tangent to the x's position on the curve at time t.
 
-This insight is really neat: The logarithm of a transform matrix is another matrix that maps positions in space to tangent vectors.
+This insight is really neat: The logarithm of a transform matrix is another matrix that maps positions in space to tangent vectors. You can think of the log of a matrix as the velocity field of the action performed by that matrix.
 
-By analogy, taking the logarithm of a transform matrix is kind of like producing the assembly instructions for that transform. If the transform matrix is like a high level representation of a transform, then the logarithm of the transform matrix is a bunch of tangent vectors which are like low level assembly code. You can take the exponent of the logarithm of the transform matrix, or numerically integrate a point using the log(transform), or solve the matrix exponent directly, or even find a closed form solution for log() and exp() for certain groups of transforms. These have very different meanings for computation, but conceptually, the log of a transform matrix-- really, the log of any matrix-- can be thought of as the velocity field of the action performed by that matrix.
-
-How can we think of a matrix as a vector field? An eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-Another way of looking at our equation above is to say
+Another way of looking at the equation above is to say
 
 $velocity = log(transform) * position$
 
 meaning, to understand how a point will move in time, look at the vector field of the log of the transform as a velocity field. As the point flows along that velocity field, it moves in time.
 
+If you are wondering how you can we think of a matrix as a vector field, an eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 
 ### What's the ODE?
 
-The above can also be rearranged as
+Let's look at the equation from earlier $\dfrac{d}{dt} x(t) = log(T) x(t)$ from the perspective of differential equations. $log(T)$ is a matrix, so this is more specifically a matrix differential equation.
+
+Scalar ordinary differential equations of the form
+
+$y'(t)=ay(t)$
+
+have the general solution
+
+$y(t)=e^{at}y(0)$.
+
+Similarly, matrix differential equations of the form
+
+$x'(t)=Ax(t)$
+
+have the general solution
+
+$x(t)=e^{At}x(0)$.
+
+Therefore, given our equation from earlier
 
 $\dfrac{d}{dt} x(t) = log(T) x(t)$
 
-which is a matrix differential equation. $log(T)$ is just a matrix.
-
-Just as scalar ordinary differential equations of the form $y'(t)=ay(t)$ have the solution $y(t)=e^{at}y(0)$, matrix differential equations of the form $x'(t)=Ax(t)$ have the general solution $x(t)=e^{At}x(0)$.
-
-That means that the solution to the matrix differential equation above is
+we have the solution
 
 $x(t) = e^{log(T) t} x(0)$.
 
+This is the same as our original equation, but from the opposite direction.
+
 ### Deriving the derivative of the matrix exponential
 
-_Be careful below. The chain rule is correct here, but it only applies in certain circumstances: [A Remark on the Chain Rule for Exponential Matrix Functions](https://www.maa.org/sites/default/files/liu03010328120.pdf)_
+Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why that is correct, but it is the key to unlocking all of this. I don't know how to explain this property in a more intuitive way than these derivations, so here are two different ways of proving that equation is correct.
 
-Let's find the derivative of that equation. Starting with
-
-$\dfrac{d x(t)}{dt} = (e^{A t} x(0))'$
-
-we can pull out the constant $x(0)$
-
-$\dfrac{d x(t)}{dt} = (e^{A t})' x(0)$
-
-and then apply the chain rule
-
-$\dfrac{d x(t)}{dt} = (A t)' e^{A t} x(0)$
-
-The derivative of $A t$ with respect to $t$ is just $A$, leaving us with 
-
-$\dfrac{d x(t)}{dt} = A e^{A t} x(0)$.
-
-### Deriving the derivative of the matrix exponential, another way
+#### First way
 
 The matrix exponential is defined as
 
@@ -154,15 +160,21 @@ Pull out A, and then we have
 
 $\dfrac{d}{dt}e^{A t} = A*(I + A t + \frac{1}{2} (A t)^2 + ...) = A e^{A t}$.
 
-If we plug that into the equation
+#### Second way
 
-$\dfrac{d}{dt}x(t) = (e^{A t} x(0))'$
+Another way is to use the chain rule. Starting with
 
-and pull out the constant $x(0)$, the result is
+$\dfrac{d}{dt}e^{A t} = (e^{A t})'$
 
-$\dfrac{d}{dt}x(t) = A e^{A t} x(0)$.
+we apply the chain rule so we have
 
+$\dfrac{d}{dt}e^{A t} = (A t)' e^{A t}$
 
+and since the derivative of $A t$ with respect to $t$ is just $A$, we are left with
+
+$\dfrac{d}{dt}e^{A t} = A e^{A t}$.
+
+But be careful-- the chain rule is correct here, but it only applies in certain circumstances: [A Remark on the Chain Rule for Exponential Matrix Functions](https://www.maa.org/sites/default/files/liu03010328120.pdf)_
 
 
 ### Example: Rotation
