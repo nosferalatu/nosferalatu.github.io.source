@@ -8,11 +8,24 @@ Summary: Projects
 
 These are some things I've worked on over the years:
 
-### Medium (Adobe / 2020 )
+
+### Adobe Substance 3D Modeler (Adobe / 2022)
+
+At Adobe, I work in the 3D&Immersive group, where I work on Adobe Substance 3D Modeler. Modeler is based on much of Medium's code, along with many improvements and new additions. Modeler is a hybrid application, meaning it has both VR and desktop modes.
+
+I added support for deep sharing/copy-on-write to the sculpting engine, many improvements to the warp tool, occlusion culling and other GPU optimizations to maintain a steady VR framerate, and refinements and maintenance of the custom 3D engine powering Modeler.
+
+![test image]({static}../images/substancemodeler0.jpg)
+
+![test image]({static}../images/substancemodeler1.jpg)
+
+![test image]({static}../images/substancemodeler2.jpg)
+
+### Medium (Adobe / 2020)
 
 Medium was acquired by Adobe at the end of 2019: [Adobe Acquisition](https://theblog.adobe.com/adobe-accelerates-3di-efforts-through-medium-acquisition/)
 
-At Adobe, I work in the 3D&Immersive group, where I'm continuing to work on Medium and developing innovative sculpting and modeling software.
+I continued work on Medium, enhancing its GPU driven rendering engine, improving the Studio Share networking code, and endless improvements to the move tool.
 
 ![test image]({static}../images/oculusmedium5.jpg)
 
@@ -20,7 +33,7 @@ At Adobe, I work in the 3D&Immersive group, where I'm continuing to work on Medi
 
 ![test image]({static}../images/oculusmedium6.jpg)
 
-### Medium (Oculus / 2016 )
+### Medium (Oculus / 2016)
 
 [Oculus Medium](https://www.oculus.com/medium/) is a digital sculpting application that works with virtual reality headsets and 6DoF controllers to let you sculpt, model, paint, and create solid-feeling objects in a VR environment.
 
