@@ -62,12 +62,17 @@ PYGMENTS_STYLE = 'emacs'
 CUSTOM_CSS = 'static/custom.css'
 
 # Tell Pelican what to add to the output dir
-STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME', 'js']
+STATIC_PATHS = ['images', 'extra\custom.css', 'CNAME', 'js', 'raw']
 
 # Tell Pelican to change the path to 'static/custom.css' in the output dir
 EXTRA_PATH_METADATA = {
-    'extra\custom.css': {'path': 'static\custom.css'}
+    'extra\custom.css': {'path': 'static\custom.css'},
 }
+
+# Prevent Pelican from processing the files in these directories (they are raw html)
+ARTICLE_EXCLUDES = [
+    'raw'
+]
 
 DISPLAY_TAGS_ON_SIDEBAR = False
 
