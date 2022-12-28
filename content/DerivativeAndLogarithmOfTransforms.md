@@ -17,6 +17,25 @@ meaning, to find the point x at time t, we multiply the point's initial position
 
 I want to show how to do that, and also share some interesting insights I learned along the way.
 
+### Example
+
+First, here is an interactive example. As you move the cube around, you can see the vector field change. The vector field is the velocity of the transformation at points in space.
+
+<body>
+  <!-- <div id="canvas" style="width: 256px; max-width: 256px; height: 512px; max-height: 512px;"></div> -->
+  <div>
+   <div id="canvas-gui-container" style="position:absolute;"></div>
+   <canvas id="canvas" width="512" height="512"></canvas>
+  </div>
+</body>
+
+<script src="/js/three.js/three.min.js"></script>
+<script src="/js/three.js/OrbitControls.js"></script>
+<script src="/js/three.js/TransformControls.js"></script>
+<script type="module" src="/js/three.js/VRButton.js"></script>
+<script src="/js/lil-gui/lil-gui@0.17.umd.js"></script>
+<script src="/js/VectorField.js"></script>
+
 ### What's $T(t)$?
 We have $T$, but not $T(t)$, which changes with time. Assuming that multiplying two transforms represents the composition of those transforms, we can find $T(t)$ by saying
 
@@ -92,7 +111,7 @@ $\dfrac{d}{dt}x(t) = log(T) x(t)$.
 
 This relates the derivative of a moving point to the logarithm of the transformation moving that point.
 
-You can think of $log(T)$ as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is constant with respect to t; it's the same field, regardless of what time is. The vector field shows what the velocity is for every point in space.
+You can think of $log(T)$ as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is independent of time. It's constant with respect to t. The vector field shows what the velocity is for every point in space.
 
 That equation is saying that if you transform any point in space by the logarithm of the transform, you will get the first derivative at that point. The first derivative is the velocity, so $log(T)$ defines the velocity field (the field of tangent vectors at every point in space). 
 
@@ -100,7 +119,9 @@ As x moves through space by the transform matrix, it forms a curve; the tangent 
 
 This insight is really neat: The logarithm of a transform matrix is another matrix that maps positions in space to tangent vectors. You can think of the log of a matrix as the velocity field of the action performed by that matrix.
 
-Another way of looking at the equation above is to say
+The vector field visualized in the interactive example above is this velocity field.
+
+Another way of looking at the equation $\dfrac{d}{dt}x(t) = log(T) x(t)$ is to say
 
 $velocity = log(transform) * position$
 
@@ -142,11 +163,11 @@ $x(t) = e^{log(T) t} x(0)$.
 
 This is the same as our original equation, but from the opposite direction.
 
-### Deriving the derivative of the matrix exponential
+### The derivative of the matrix exponential
 
-Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why that is correct, but it is the key to unlocking all of this. I don't know how to explain this property in a more intuitive way than these derivations, so here are two different ways of proving that equation is correct.
+Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why that is correct, but that property is an important part of unlocking all of this.
 
-#### First way
+A good reference for this derivation is in the textbook Modern Robotics. [A free copy of that book can be found here](http://hades.mech.northwestern.edu/index.php/Modern_Robotics). See equation (3.43) in that book.
 
 The matrix exponential is defined as
 
@@ -160,72 +181,8 @@ Pull out A, and then we have
 
 $\dfrac{d}{dt}e^{A t} = A*(I + A t + \frac{1}{2} (A t)^2 + ...) = A e^{A t}$.
 
-#### Second way
+Interestingly, note that $A$ can go on the left or the right. It is always true that
 
-Another way is to use the chain rule. Starting with
+$Ae^{A t} = e^{A t}A$
 
-$\dfrac{d}{dt}e^{A t} = (e^{A t})'$
-
-we apply the chain rule so we have
-
-$\dfrac{d}{dt}e^{A t} = (A t)' e^{A t}$
-
-and since the derivative of $A t$ with respect to $t$ is just $A$, we are left with
-
-$\dfrac{d}{dt}e^{A t} = A e^{A t}$.
-
-But be careful-- the chain rule is correct here, but it only applies in certain circumstances: [A Remark on the Chain Rule for Exponential Matrix Functions](https://www.maa.org/sites/default/files/liu03010328120.pdf)_
-
-
-### Example: Rotation
-
-That differential equation is saying that if you transform any point in space by the logarithm of the transform, you will get the first derivative at that point. The first derivative is the velocity, so $log(T)$ defines the velocity field (the field of tangent vectors at every point in space).
-
-One way to see this is to consider rotation matrices. Imagine we have a rotation matrix R and a point x. Then we have
-
-$\dfrac{d x(t)}{dt} = log(R) * R^t * x(0)$
-
-which can be read as: starting with the initial point x, rotate it for t units of time, which results in a new point at position x(t). Then, multiply that new point by the the logarithm of $R$. That returns the first derivative (the tangent vector) at that new point. Note that $log(R)$ is independent of time; it returns a different tangent vector for each point in space, but it doesn't return a different tangent vector at different times.
-
-The logarithm of a rotation matrix is a skew symmetric matrix that corresponds to angular velocity. If you are using an axis-angle representation for rotation, the angular velocity vector is $\omega$, which is a vector pointing in the direction of the axis of rotation with a length equal to the angle of rotation.
-
-
-
-### WebGL
-
-<body>
-  <!-- <div id="canvas" style="width: 256px; max-width: 256px; height: 512px; max-height: 512px;"></div> -->
-  <div>
-   <div id="canvas-gui-container" style="position:absolute;"></div>
-   <canvas id="canvas" width="512" height="512"></canvas>
-  </div>
-  <div id="overlay">
-    <div>slider <input id="slider" type="range" min="-1" max="2" step="0.01" value="0" /></div>
-    <div>Time: <span id="time"></span></div>
-    <div>Slider Value: <span id="sliderValue"></span></div>
-  </div>
-</body>
-
-<!-- <script type="text/javascript" src="/js/testClearToRed.js"></script> -->
-<script src="/js/three.js/three.min.js"></script>
-<script src="/js/three.js/OrbitControls.js"></script>
-<script src="/js/three.js/TransformControls.js"></script>
-<script type="module" src="/js/three.js/VRButton.js"></script>
-<script src="/js/lil-gui/lil-gui@0.17.umd.js"></script>
-<script src="/js/VectorField.js"></script>
-
-
-# Miscellaneous
-
-At time 0, we have $T(0) = I$ (the identity transform).
-
-At time 1, we have $T(1) = T$.
-
-
-$10x^9$
-
-rocket
-
-
-
-
+for any square matrix (equation (3.44) in Modern Robotics). 
