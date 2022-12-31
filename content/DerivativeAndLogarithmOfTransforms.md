@@ -15,11 +15,11 @@ $x(t) = T(t) * x(0)$
 
 meaning, to find the point x at time t, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single matrix $T$, we need to find a way to interpolate that matrix in time.
 
-I want to show how to do that, and also share some interesting insights I learned along the way.
+One way to do that is to raise $T$ to the power of t using matrix exponentials and matrix logarithms. Interestingly, the matrix logarithm of a transform matrix can be used to easily find the velocity of a point x in space-- the velocity vector (or tangent vector) is just $log(T) * x$. This has given me a lot of intuition into both logarithms and exponentials of functions, and a deeper insight into transformation matrices, which I want to share here.
 
 ### Example
 
-First, here is an interactive example. As you move the cube around, you can see the vector field change. The vector field is the velocity of the transformation at points in space.
+First, here is an interactive example. As you use the gizmo to rotate and translate the transform, you can see the vector field change. The vector field represents the velocity vector of every point in space as it is being transformed.
 
 <body>
   <!-- <div id="canvas" style="width: 256px; max-width: 256px; height: 512px; max-height: 512px;"></div> -->
@@ -127,13 +127,13 @@ $velocity = log(transform) * position$
 
 meaning, to understand how a point will move in time, look at the vector field of the log of the transform as a velocity field. As the point flows along that velocity field, it moves in time.
 
-If you are wondering how you can we think of a matrix as a vector field, an eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
+If you are wondering how you can visualize a matrix as a vector field, an eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 
-### What's the ODE?
+### What's the differential equation?
 
 Let's look at the equation from earlier $\dfrac{d}{dt} x(t) = log(T) x(t)$ from the perspective of differential equations. $log(T)$ is a matrix, so this is more specifically a matrix differential equation.
 
