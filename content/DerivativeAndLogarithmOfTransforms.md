@@ -15,11 +15,13 @@ $x(t) = T(t) * x(0)$
 
 meaning, to find the point x at time t, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single matrix $T$, we need to find a way to interpolate that matrix in time.
 
-One way to do that is to raise $T$ to the power of t using matrix exponentials and matrix logarithms. Interestingly, the matrix logarithm of a transform matrix can be used to easily find the velocity of a point x in space-- the velocity vector (or tangent vector) is just $log(T) * x$. This has given me a lot of intuition into both logarithms and exponentials of functions, and a deeper insight into transformation matrices, which I want to share here.
+One way to do that is to raise $T$ to the power of t using matrix exponentials and matrix logarithms. Interestingly, the matrix logarithm of a transform matrix can also be used to easily find the velocity of a point x in space-- the velocity vector (or tangent vector) is just $log(T) * x$.
 
 ### Example
 
-First, here is an interactive example. As you use the gizmo to rotate and translate the transform, you can see the vector field change. The vector field represents the velocity vector of every point in space as it is being transformed.
+To start with, here is an interactive example. As you use the gizmo to rotate and translate the transform, you can see the vector field change. The vector field can be interpreted as the the velocity vector at every point in space as it is being transformed.
+
+Once you move the gizmo, you can see a small white box moving, which is being interpolated from the identity transform to the gizmo's transform every second. As you can see, it's following the flow of the velocity vector field. The code is actually using a matrix log and exponential to interpolate the box each frame.
 
 <body>
   <!-- <div id="canvas" style="width: 256px; max-width: 256px; height: 512px; max-height: 512px;"></div> -->
@@ -35,6 +37,8 @@ First, here is an interactive example. As you use the gizmo to rotate and transl
 <script type="module" src="/js/three.js/VRButton.js"></script>
 <script src="/js/lil-gui/lil-gui@0.17.umd.js"></script>
 <script src="/js/VectorField.js"></script>
+
+Next, I'll describe how to compute the interpolated transform and the velocity vector field you see in this example.
 
 ### What's $T(t)$?
 We have $T$, but not $T(t)$, which changes with time. Assuming that multiplying two transforms represents the composition of those transforms, we can find $T(t)$ by saying
@@ -165,7 +169,7 @@ This is the same as our original equation, but from the opposite direction.
 
 ### The derivative of the matrix exponential
 
-Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why that is correct, but that property is an important part of unlocking all of this.
+Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why this property is true, but it's an important part of unlocking all of this.
 
 A good reference for this derivation is in the textbook Modern Robotics. [A free copy of that book can be found here](http://hades.mech.northwestern.edu/index.php/Modern_Robotics). See equation (3.43) in that book.
 
