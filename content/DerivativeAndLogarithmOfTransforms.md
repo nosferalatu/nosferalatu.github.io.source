@@ -1,5 +1,5 @@
 Title: Derivatives, Logarithms, and Transforms
-Date: 2022-08-01 21:00
+Date: 2023-01-14 16:00
 Tags: Programming
 Category: Blog
 Slug: DerivativesLogarithmsTransforms
@@ -19,9 +19,9 @@ One way to do that is to raise $T$ to the power of $t$, which can be done with t
 
 ### Example
 
-To start with, here is an interactive example. As you use the gizmo to rotate and translate the transform, you can see the vector field change. The vector field can be interpreted as the the velocity vector at every point in space as it is being transformed.
+To start with, here is an interactive example. As you use the gizmo to rotate and translate the transform, you can see the vector field change. The vector field can be interpreted as the the velocity vector at every point in space as the point is being transformed.
 
-Once you move the gizmo, you can see a small white box moving, which is being interpolated from the identity transform to the gizmo's transform every second. As you can see, it's following the flow of the velocity vector field. The code is actually using a matrix log and exponential to interpolate the box each frame.
+As you move the gizmo, you can see a white curve from the origin to the gizmo's transform. Along that curve, you can also see the interpolated transform as it travels from the origin to the gizmo. As you can see, the interpolation follows the flow of the velocity vector field. The code is using the exponential and logarithm of the transform to compute the curve and interpolated transform.
 
 <body>
   <!-- <div id="canvas" style="width: 256px; max-width: 256px; height: 512px; max-height: 512px;"></div> -->
@@ -97,7 +97,7 @@ $\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$.
 
 This can be read as: to find the first derivative (tangent vector) of the point at time t, start with the initial position of the point, transform it with the interpolated transform at time t, and then multiply it by the log of the transform. This is using column vector notation, so you should read the operations as happening right-to-left: the initial position of the point is $x(0)$, the interpolated transform is $e^{log(T) t}$, and the log of the transform is $log(T)$.
 
-You can think of $e^{log(T) t}$ as a kind of operator that maps points from their initial position to their new position at time t. I like to think of the matrix exponential as like integration. At time 0, $e^{log(T) t}$ is the identity matrix (because $e^0=I$ for matrix exponentials); at time 1.0, $e^{log(T) t}$ is the original transform matrix T (because $e^{log(T)}=T$).
+$e^{log(T) t}$ is a kind of operator that maps points from their initial position to their new position at time t. I like to think of the matrix exponential as like integration. At time 0, $e^{log(T) t}$ is the identity matrix (because $e^0=I$ for matrix exponentials); at time 1.0, $e^{log(T) t}$ is the original transform matrix T (because $e^{log(T)}=T$).
 
 ### What's this all mean?
 
@@ -115,7 +115,7 @@ $\dfrac{d}{dt}x(t) = log(T) x(t)$.
 
 This relates the derivative of a moving point to the logarithm of the transformation moving that point.
 
-You can think of $log(T)$ as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is independent of time. It's constant with respect to t. The vector field shows what the velocity is for every point in space.
+One way to think of $log(T)$ is as the vector field of tangent vectors of that transform. In other words, it's the field of first derivatives. This vector field is independent of time. It's constant with respect to t. The vector field shows what the velocity is for every point in space.
 
 That equation is saying that if you transform any point in space by the logarithm of the transform, you will get the first derivative at that point. The first derivative is the velocity, so $log(T)$ defines the velocity field (the field of tangent vectors at every point in space). 
 
