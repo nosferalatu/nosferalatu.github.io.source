@@ -7,15 +7,15 @@ Author: David Farrell
 Summary: Understanding derivatives and logarithms of transforms
 Status: draft
 
-Given a transform matrix $T$ and a point x, we can find the transformed point with $T * x$. Multiply the point x by the matrix $T$, and out pops a new point.
+Given a transform matrix $T$ and a point x, we can find the transformed point with $T * x$. Multiply the point $x$ by the matrix $T$, and out pops a new point.
 
-But what if we want to smoothly interpolate $T$ so it moves x along the path from its initial position to its position transformed by $T$? What we want is 
+But what if we want to smoothly interpolate $T$ so it moves $x$ along the path from its initial position to its position transformed by $T$? What we want is 
 
 $x(t) = T(t) * x(0)$
 
-meaning, to find the point x at time t, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single matrix $T$, we need to find a way to interpolate that matrix in time.
+meaning, to find the point $x$ at time $t$, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single matrix $T$, we need to find a way to interpolate that matrix in time.
 
-One way to do that is to raise $T$ to the power of t using matrix exponentials and matrix logarithms. Interestingly, the matrix logarithm of a transform matrix can also be used to easily find the velocity of a point x in space-- the velocity vector (or tangent vector) is just $log(T) * x$.
+One way to do that is to raise $T$ to the power of $t$, which can be done with the matrix exponential and matrix logarithm. Interestingly, the matrix logarithm of a transform matrix can also be used to easily find the velocity of a point $x$ in space: the velocity vector (or tangent vector) is just $log(T) * x$. This blog post shows how the logarithm and velocity are related.
 
 ### Example
 
@@ -95,7 +95,7 @@ Using that, we can find the derivative of our earlier equation $x(t) = e^{log(T)
 
 $\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$.
 
-This can be read as: to find the first derivative (tangent vector) of the point at time t, start with the initial position of the point, transform it with the interpolated transform at time t, and then multiply it by the log of the transform. This is using column vector notation, so you should read the operations right-to-left: the initial position of the point is $x(0)$, the interpolated transform is $e^{log(T) t}$, and the log of the transform is $log(T)$.
+This can be read as: to find the first derivative (tangent vector) of the point at time t, start with the initial position of the point, transform it with the interpolated transform at time t, and then multiply it by the log of the transform. This is using column vector notation, so you should read the operations as happening right-to-left: the initial position of the point is $x(0)$, the interpolated transform is $e^{log(T) t}$, and the log of the transform is $log(T)$.
 
 You can think of $e^{log(T) t}$ as a kind of operator that maps points from their initial position to their new position at time t. I like to think of the matrix exponential as like integration. At time 0, $e^{log(T) t}$ is the identity matrix (because $e^0=I$ for matrix exponentials); at time 1.0, $e^{log(T) t}$ is the original transform matrix T (because $e^{log(T)}=T$).
 
@@ -125,21 +125,17 @@ This insight is really neat: The logarithm of a transform matrix is another matr
 
 The vector field visualized in the interactive example above is this velocity field.
 
-Another way of looking at the equation $\dfrac{d}{dt}x(t) = log(T) x(t)$ is to say
+A more informal way of looking at the equation $\dfrac{d}{dt}x(t) = log(T) x(t)$ is to say
 
 $velocity = log(transform) * position$
 
 meaning, to understand how a point will move in time, look at the vector field of the log of the transform as a velocity field. As the point flows along that velocity field, it moves in time.
 
-If you are wondering how you can visualize a matrix as a vector field, an eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-
-
 ### What's the differential equation?
 
-Let's look at the equation from earlier $\dfrac{d}{dt} x(t) = log(T) x(t)$ from the perspective of differential equations. $log(T)$ is a matrix, so this is more specifically a matrix differential equation.
+Let's look at this in a different way-- from the perspective of differential equations. Earlier, we had
+$\dfrac{d}{dt} x(t) = log(T) x(t)$
+which is a differential equation, and because $log(T)$ is a matrix, it is more specifically a matrix differential equation.
 
 Scalar ordinary differential equations of the form
 
@@ -166,6 +162,12 @@ we have the solution
 $x(t) = e^{log(T) t} x(0)$.
 
 This is the same as our original equation, but from the opposite direction.
+
+### Visualizing a matrix as a vector field
+
+If you are wondering how you can visualize a matrix as a vector field, an eloquent explanation is in 3Blue1Brown's video about matrix exponentiation. This part about matrices as vector fields explains that very well:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### The derivative of the matrix exponential
 
