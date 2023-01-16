@@ -55,7 +55,7 @@ More generally, we can find $T$ at any time by saying
 
 $T(t) = T^t$.
 
-The above trick is from a blog post by Fabien Geisen [here](https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/) but works for any transform that uses multiplication for composition.
+The above trick is from a blog post by Fabian Giesen [here](https://fgiesen.wordpress.com/2012/08/24/quaternion-differentiation/) but works for any transform that uses multiplication for composition.
 
 Now that we know $T(t) = T^t$, the original equation can be rearranged to
 
