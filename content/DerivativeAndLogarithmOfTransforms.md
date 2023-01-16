@@ -81,7 +81,7 @@ $x(t) = e^{log(T) * t} * x(0)$.
 
 This says that to find the point x at time t, find the transform at time t using $e^{log(T) * t}$, and use that to transform the point at its initial position (at time 0).
 
-### What's the derivative?
+### What's the derivative? {#WhatsTheDerivative}
 
 In calculus, we learned that
 
@@ -91,7 +91,9 @@ which is also true for matrices:
 
 $\dfrac{d}{dt}e^{A t} = A e^{A t}$
 
-Using that, we can find the derivative of our earlier equation $x(t) = e^{log(T)t} x(0)$ with respect to t:
+A derivation of this can be found below in [the derivative of the matrix exponential](#DerivativeOfMatrixExponential) section.
+
+Using that property, we can find the derivative of our earlier equation $x(t) = e^{log(T)t} x(0)$ with respect to t:
 
 $\dfrac{d}{dt}x(t) = log(T) e^{log(T) t} x(0)$.
 
@@ -134,8 +136,10 @@ meaning, to understand how a point will move in time, look at the vector field o
 ### What's the differential equation?
 
 Let's look at this in a different way-- from the perspective of differential equations. Earlier, we had
+
 $\dfrac{d}{dt} x(t) = log(T) x(t)$
-which is a differential equation, and because $log(T)$ is a matrix, it is more specifically a matrix differential equation.
+
+which is a differential equation. Because $log(T)$ is a matrix, it is more specifically a matrix differential equation.
 
 Scalar ordinary differential equations of the form
 
@@ -161,7 +165,7 @@ we have the solution
 
 $x(t) = e^{log(T) t} x(0)$.
 
-This is the same as our original equation, but from the opposite direction.
+This is the same as our original equation, but we started with a differential equation and found a solution. To prove this solution is correct, just take the derivative of it, which is what we did earlier in the [What's the derivative?](#WhatsTheDerivative) section.
 
 ### Visualizing a matrix as a vector field
 
@@ -169,7 +173,7 @@ If you are wondering how you can visualize a matrix as a vector field, an eloque
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/O85OWBJ2ayo?start=1331" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-### The derivative of the matrix exponential
+### The derivative of the matrix exponential {#DerivativeOfMatrixExponential}
 
 Earlier we used the property $\dfrac{d}{dt}e^{A t} = A e^{A t}$. It's not obvious why this property is true, but it's an important part of unlocking all of this.
 
