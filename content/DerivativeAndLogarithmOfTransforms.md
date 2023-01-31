@@ -191,7 +191,7 @@ At this point, you might be wondering how to practically compute the exponential
 
 1) Use a math library like Eigen or Armadillo. These have functions to compute the matrix exponential and matrix logarithm.
 
-2) The library Sophus has code for a closed form exp/log for the groups SO(3), SE(3), and SIM(3). Beware that it clamps its quaternions to [-pi,+pi] though.
+2) The library Sophus has code for a closed form exp/log for the groups SO(3), SE(3), and SIM(3). Beware that it clamps its quaternions to a 3D rotation angle in -$\pi$ ... +$\pi$ though.
 
 3) There is an excellent PDF at the web site of Ethan Eade [here](https://ethaneade.com/lie.pdf) which contains the closed form equations for the groups SO(3), SE(3), and SIM(3).
 
@@ -205,9 +205,9 @@ There are a few issues that you should be aware of.
 
 #### Pitfall #1
 
-The logarithm of a rotation matrix will return a 3D rotation angle in -pi ... +pi. More technically, there are an infinite number of logarithms of a matrix: one corresponding to the rotation angle in -pi ... +pi, another one 2*pi more than that, another one 2*pi more than that one... and so on (in both positive and negative directions). Generally matrix logarithm code will return the principal logarithm, which is the logarithm in -pi ... +pi. This can easily cause a discontinuity when interpolating transforms with rotations in them, such rotations from human joints (you can move your head from looking over your left shoulder to over your right shoulder and rotate a little more than 180 degrees).
+The logarithm of a rotation matrix will return a 3D rotation angle in -$\pi$ ... +$\pi$. More technically, there are an infinite number of logarithms of a matrix: one corresponding to the rotation angle in -$\pi$ ... +$\pi$, another one 2$\pi$ more than that, another one 2$\pi$ more than that one... and so on (in both positive and negative directions). Generally matrix logarithm code will return the principal logarithm, which is the logarithm in -$\pi$ ... +$\pi$. This can easily cause a discontinuity when interpolating transforms with rotations in them, such rotations from human joints (you can move your head from looking over your left shoulder to over your right shoulder and rotate a little more than 180 degrees).
 
-The logarithm of a quaternion with return a 3D rotation angle in -2*pi ... +2*pi. This is one of the properties that makes quaternions nice to work with. There's still a discontinuity when interpolating transforms using quaternions, but you have more space to work with. Rotations from human joints stay within the rotation that can be specified with two quaternions (you can't move your head past 360 degrees, although sometimes reading papers about Lie theory feel that way).
+The logarithm of a quaternion with return a 3D rotation angle in the larger range of -2$\pi$ ... +2$\pi$. This is one of the properties of quaternions that makes them nice to work with. Although there's still a discontinuity when interpolating transforms using quaternions, you have a larger range to work with. Rotations from human joints stay within the rotation that can be specified with two quaternions (you can't move your head past 360 degrees, although reading papers about Lie theory sometimes feels that way).
 
 #### Pitfall #2
 
