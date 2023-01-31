@@ -7,15 +7,15 @@ Author: David Farrell
 Summary: Understanding derivatives and logarithms of transforms
 Status: draft
 
-Given a transform matrix $T$ and a point x, we can find the transformed point with $T * x$. Multiply the point $x$ by the matrix $T$, and out pops a new point.
+Given a transform $T$ and a point x, we can find the transformed point with $T * x$. Multiply the point $x$ by $T$, and out pops a new point.
 
 But what if we want to smoothly interpolate $T$ so it moves $x$ along the path from its initial position to its position transformed by $T$? What we want is 
 
 $x(t) = T(t) * x(0)$
 
-meaning, to find the point $x$ at time $t$, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single matrix $T$, we need to find a way to interpolate that matrix in time.
+meaning, to find the point $x$ at time $t$, we multiply the point's initial position ($x(0)$) by the transform at time t ($T(t)$). But since we only have a single transform $T$, we need to find a way to interpolate that transform in time.
 
-One way to do that is to raise $T$ to the power of $t$, which can be done with the matrix exponential and matrix logarithm. Interestingly, the matrix logarithm of a transform matrix can also be used to easily find the velocity of a point $x$ in space: the velocity vector (or tangent vector) is just $log(T) * x$. This blog post shows how the logarithm and velocity are related.
+One way to do that is to raise $T$ to the power of $t$, which can be done with the exponential and logarithm of a transform. Interestingly, the logarithm of a transform can also be used to easily find the velocity of a point $x$ in space: the velocity vector (also called the tangent vector) is just $log(T) * x$. This blog post shows how the logarithm and velocity are related.
 
 ### Example
 
@@ -63,7 +63,7 @@ $x(t) = T^t * x(0)$.
 
 ### What's $T^t$?
 
-To compute $T^t$, we need to use matrix exponentials and matrix logarithms.
+To compute $T^t$, we need to use the matrix exponential and matrix logarithm.
 
 Let's start with two facts about a matrix X:
 
@@ -121,7 +121,7 @@ One way to think of $log(T)$ is as the vector field of tangent vectors of that t
 
 That equation is saying that if you transform any point in space by the logarithm of the transform, you will get the first derivative at that point. The first derivative is the velocity, so $log(T)$ defines the velocity field (the field of tangent vectors at every point in space). 
 
-As x moves through space by the transform matrix, it forms a curve; the tangent vector at time t is tangent to the x's position on the curve at time t.
+As x moves through space by the transform, it forms a curve; the tangent vector at time t is tangent to the x's position on the curve at time t.
 
 This insight is really neat: The logarithm of a transform matrix is another matrix that maps positions in space to tangent vectors. You can think of the log of a matrix as the velocity field of the action performed by that matrix.
 
@@ -135,7 +135,7 @@ meaning, to understand how a point will move in time, look at the vector field o
 
 ### What's the differential equation?
 
-Let's look at this in a different way-- from the perspective of differential equations. Earlier, we had
+We can also reformulate all of this as a differential equation. Earlier, we had
 
 $\dfrac{d}{dt} x(t) = log(T) x(t)$
 
@@ -166,6 +166,72 @@ we have the solution
 $x(t) = e^{log(T) t} x(0)$.
 
 This is the same as our original equation, but we started with a differential equation and found a solution. To prove this solution is correct, just take the derivative of it, which is what we did earlier in the [What's the derivative?](#WhatsTheDerivative) section.
+
+### The exponential map and logarithm map
+
+The exponential is defined as the infinite series
+
+$$e^{A t} = I + A t + \frac{1}{2}(A t)^2 + \frac{1}{3!}(A t)^3 + ... = \sum_{i=0}^{\infty} \frac{(At)^i}{i!}$$
+
+We first learn about that definition in calculus where it's defined on real numbers. However, the exponential infinite series can be applied to other mathematical objects, such as complex numbers, quaternions, and matrices. More generally, it can be used with anything that can multiply with itself.
+
+For example, square matrices can be multiplied together, and using the above formula you can find the [matrix exponential](https://en.wikipedia.org/wiki/Matrix_exponential). Another example is quaternions, which can be multiplied together, and you can find the [quaternion exponential](https://en.wikipedia.org/wiki/Quaternion#Functions_of_a_quaternion_variable). A counter example is a vector, which cannot multiply by itself and has no exponential function.
+
+Similarly, the logarithm is defined as the infinite series
+
+$$log(A) = \sum_{i=1}^{\infty} (-1)^{i+1} \frac{(A - I)^i}{i}$$
+
+And we can find the logarithm of not just real numbers, but also complex numbers, quaternions, and matrices.
+
+If you want to know more, search for the exponential map and logarithm map. These are used in Lie group theory. The exponential map and logarithm map are inverses of each other. In Lie theory, the exponential map maps a tangent vector at a point p to a point on the manifold; and the logarithm map does the opposite-- it maps a point on the manifold back to the tangent vector at p. The logarithm map maps elements in the Lie group to the Lie algebra (the tangent space of the group), and the exponential map maps elements in the Lie algebra to the Lie group.
+
+When reading about Lie groups, you'll come across many different kinds of groups. There are only a few groups that are related to transforms, though. **SO(3)** is a 3D rotation matrix, **SU(2)** is a quaternion, **SE(3)** is a 3D rigid body transform (rotation and translation), **SIM(3)** is rotation, translation, and (positive) uniform scale, and **GL(n)** is an nxn matrix.
+
+At this point, you might be wondering how to practically compute the exponential and logarithm map for a matrix or other object. There are several options:
+
+1) Use a math library like Eigen or Armadillo. These have functions to compute the matrix exponential and matrix logarithm.
+
+2) The library Sophus has code for a closed form exp/log for the groups SO(3), SE(3), and SIM(3). Beware that it clamps its quaternions to [-pi,+pi] though.
+
+3) There is an excellent PDF at the web site of Ethan Eade [here](https://ethaneade.com/lie.pdf) which contains the closed form equations for the groups SO(3), SE(3), and SIM(3).
+
+4) Compute the matrix exponential and logarithm by using the infinite series definitions above, and truncating after some number of terms. In my experience, this is not robust when working with floating point numbers, as you quickly start to deal with very small and very large numbers, depending on your input matrix.
+
+5) Compute the exponential with numerical integration. Given a starting point $x$, integrating it for time t is the same thing as the exponential. There are many ways to compute numerical integration, from Euler to Runge-Kutta to adaptive methods.
+
+### Pitfalls
+
+There are a few issues that you should be aware of.
+
+#### Pitfall #1
+
+The logarithm of a rotation matrix will return a 3D rotation angle in -pi ... +pi. More technically, there are an infinite number of logarithms of a matrix: one corresponding to the rotation angle in -pi ... +pi, another one 2*pi more than that, another one 2*pi more than that one... and so on (in both positive and negative directions). Generally matrix logarithm code will return the principal logarithm, which is the logarithm in -pi ... +pi. This can easily cause a discontinuity when interpolating transforms with rotations in them, such rotations from human joints (you can move your head from looking over your left shoulder to over your right shoulder and rotate a little more than 180 degrees).
+
+The logarithm of a quaternion with return a 3D rotation angle in -2*pi ... +2*pi. This is one of the properties that makes quaternions nice to work with. There's still a discontinuity when interpolating transforms using quaternions, but you have more space to work with. Rotations from human joints stay within the rotation that can be specified with two quaternions (you can't move your head past 360 degrees, although sometimes reading papers about Lie theory feel that way).
+
+#### Pitfall #2
+
+When working with logarithms, be aware that that the property
+
+$log(AB) = log(A) + log(B)$
+
+is _only_ true when A and B commute. Most transforms don't commute (such as two rotations). Real numbers always commute, though, so the above property is tempting to apply to transforms.
+
+For example, you might want to say that "the logarithm of a rigid body transform (consisting of rotation and translation) is the logarithm of the rotation plus the logarithm of the translation". It would be nice if that were true, because the log(rotation) and log(translation) are easier and faster to compute than the log of both of them together, but the result is not the same. Interpolating a transform by using log(rotation) plus log(translation) will cause the transform to move along the straight path between the start and end transform; however, using the correct log(rotation*translation) will cause the interpolated transform to move along a helical, screw path from start to end, which is the correct result.
+
+#### Pitfall #3
+
+Related to pitfall #2, you might want to blend two transforms A and B with
+
+$lerp(A, B, t) = e^{(1-t)*log(A) + t*log(B)}$
+
+But be careful: this only works if A and B commute (which, for transforms, they generally do not). Otherwise, this interpolation is neither shortest path nor constant speed.
+
+Instead, blend the relative (also called delta) transform from A to B, like this:
+
+$lerp(A, B, t) = e^{log(B A^{-1}) t} A$
+
+
 
 ### Visualizing a matrix as a vector field
 
