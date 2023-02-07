@@ -36,9 +36,9 @@ As you move the gizmo, you'll notice a white curve that traces the path from the
 <script src="/js/three.js/TransformControls.js"></script>
 <script type="module" src="/js/three.js/VRButton.js"></script>
 <script src="/js/lil-gui/lil-gui@0.17.umd.js"></script>
-<script src="/js/VectorField.js"></script>
+<script src="/js/DerivativeAndLogarithmOfTransforms_example.js"></script>
 
-The source code for the applet can be found [here](../../js/VectorField.js), which includes an implementation of closed-form log() and exp() for rigid body transforms.
+The source code for the applet can be found [here](../../js/DerivativeAndLogarithmOfTransforms_example.js), which includes an implementation of closed-form log() and exp() for rigid body transforms.
 
 Next, I'll describe how to compute the interpolated transform and the velocity vector field you see in this example.
 
