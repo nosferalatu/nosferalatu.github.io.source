@@ -1,11 +1,10 @@
 Title: Derivatives, Logarithms, and Transforms
-Date: 2023-01-14 16:00
+Date: 2023-02-07 23:00
 Tags: Programming
 Category: Blog
 Slug: DerivativesLogarithmsTransforms
 Author: David Farrell
 Summary: Understanding derivatives and logarithms of transforms
-Status: draft
 
 Given a transform $T$ and a point x, we can find the transformed point with $T * x$. But what if we want to smoothly interpolate $T$ so it moves $x$ along the path from its initial position to its position transformed by $T$? 
 
@@ -258,3 +257,7 @@ It's worth noting that the matrix $A$ can go on the left or right, and it always
 $Ae^{A t} = e^{A t}A$
 
 for any square matrix, as stated in equation (3.44) in Modern Robotics.
+
+### Comments
+
+Leave comments on Github Issues [here](https://github.com/nosferalatu/nosferalatu.github.io/issues/1).
