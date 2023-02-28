@@ -212,7 +212,6 @@ $log(AB) = log(A) + log(B)$
 
 is _only_ true when A and B commute, which is not the case for most transforms. Real numbers always commute, though, so the property does apply to them. It's tempting to apply the property to transforms, but it's important to remember it only applies when A and B commute.
 
-For example, interpolating a transform by using log(rotation) plus log(translation) will result in a straight path between the start and end transform, but the correct result is a helical, screw path that is obtained by using log(rotation*translation).
 
 #### Pitfall #3
 
@@ -260,4 +259,4 @@ for any square matrix, as stated in equation (3.44) in Modern Robotics.
 
 ### Comments
 
-Leave comments on Github Issues [here](https://github.com/nosferalatu/nosferalatu.github.io/issues/1).
+Leave comments on this post with Github Issues [here](https://github.com/nosferalatu/nosferalatu.github.io/issues/1).
